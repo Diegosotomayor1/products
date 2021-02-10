@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
 const morgan = require('morgan');
-const myConncection = require ('express-myConnection');
+const myConncection = require ('express-myconnection');
 const app = express();
 
 //importando rutas
