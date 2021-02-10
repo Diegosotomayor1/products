@@ -1,94 +1,143 @@
 <%- include ('partials/_header') -%>
 
- <div class="container">
-     <div class="row mt-5">
-         <div class="col-md-7">
-             <table class="table table bordered table-hover">
-                 <thead>
-                     <tr>
-                         <th>Codigo</th>
-                         <th>Producto</th>
-                         <th>Stock</th>
-                         <th>Precio</th>
-                         <th>Acciones</th>
-                     </tr>
-                 </thead>
-                 <tbody>
-                    <% if (data){ %>
-                    <% for (let i=0; i<data.length; i++){ %>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="title">
+                            <h3 class="title">
+                                Añadir producto
+                            </h3>
+                        </div>
+                        <form action="/add" method="post" for="form-control">
+                            <div class="form-group">
+                                <input type="hidden" name="codigo" value="0" id="codigo">
+                                <input type="text" name="producto" id="producto" class="form-control"
+                                    placeholder="Nombre del producto">    
+                                <input type="text" name="stock" class="form-control" placeholder="stock">
+                                <input type="number" id="compra" name="compra" class="form-control" step="0.01"
+                                    placeholder="Precio de compra en soles" value="">
+                                <input type="number" id="porcentaje" name="porcentaje" class="form-control" placeholder="% de Ganancia"
+                                    step="1">
+                                <input type="hidden" id="ganancia" name="ganancia" class="form-control">
+                                <input type="hidden" id="venta" name="venta" class="form-control">
+                                <button type="submit" for="form-control" onclick="getData()" id="registrar"
+                                    class="btn btn-primary">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md">
+                <table class="table table bordered table-hover">
+                    <thead>
                         <tr>
-                            <td><%= data[i].codigo %></td>
-                            <td><%= data[i].producto %></td>
-                            <td><%= data[i].stock %></td>
-                            <td>S/.<%= data[i].precio %></td>
-                            <td>
-                                <a href="/delete/<%= data[i].id %>" class="btn btn-danger">
-                                Borrar
-                                </a>
-                            </td>
+                            <th>Codigo</th>
+                            <th>Producto</th>
+                            <th>Stock</th>
+                            <th>Compra en S/.</th>
+                            <th>% de Ganancia</th>
+                            <th>Ganancia en S/.</th>
+                            <th>Venta en S/.</th>
+                            <th>Acciones</th>
                         </tr>
-                        <% }%>
-                    <% }%>
+                    </thead>
+                    <tbody>
+                        <% if (data){ %>
+                            <% for (let i=0; i<data.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= data[i].codigo %>
+                                    </td>
+                                    <td>
+                                        <%= data[i].producto %>
+                                    </td>
+                                    <td>
+                                        <%= data[i].stock %>
+                                    </td>
+                                    <td>
+                                        S/.<%= data[i].compra %>
+                                    </td>
+                                    <td>
+                                        <%= data[i].porcentaje %> %
+                                    </td>
+                                    <td>
+                                        S/.<%= data[i].ganancia %> 
+                                    </td>
+                                    <td>
+                                        S/.<%= data[i].venta %>
+                                    </td>
+                                    <td>
+                                        <a href="/delete/<%= data[i].id %>" class="btn btn-danger">
+                                            Borrar
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }%>
+                                    <% }%>
 
-                 </tbody>
-             </table>
-         </div>
-         <div class="col-md-5">
-           <div class="card">
-               <div class="card-body">
-                <form action="/add" method="post" for="form-control">
-                    <div class="form-group">
-                        <input type="hidden" name="codigo" value="0" id="codigo">
-                        <input type="text" name="producto" id="producto" class="form-control" placeholder="Nombre del producto">
-                        <input type="number" id="precio" name="precio" class="form-control" step="0.01" placeholder="Precio en dolares" value="">
-                        <input type="text" name="stock" class="form-control" placeholder="stock">        
-                        <button type="submit" for="form-control" onclick="getData()" id="registrar" class="btn btn-primary">Registrar</button>
-                    </div>    
-                </form>
-                <input type="checkbox" name="igv" id="igv"><span>Con igv</span>
-         </div>
-         
-     </div>
- </div>
- <script>
-    function getData(){
-        let producto = document.getElementById('producto').value;
-        let codigo = document.getElementById('codigo');
-        let preciosoles = document.getElementById('precio');
-         codigo.value = primeros(producto);   
-        preciosoles.value = Math.round(preciodolar(preciosoles.value));    
-    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    function preciodolar(e){
-       let dolar = document.getElementById("dolar").value; 
-       let igv = document.getElementById('igv').checked;
-       e = e*dolar;
-       if(igv){
-           return e
-       }
-       else {
-           e = e * 1.18;
-            return e
-       }
-       
-    }
+    </div>
+    <script>
+        function getData() {
+            let producto = document.getElementById('producto').value;
+            let codigo = document.getElementById('codigo');
+            let pc = document.getElementById('compra').value;
+            let pv = document.getElementById('venta');
+            let gana = document.getElementById('ganancia');
+            codigo.value = primeros(producto);
+            pv.value = precioventa(pc);
+            gana.value = ganancia(pc);
 
-    function primeros(e) {
-       let n = e.length;
-       let i = 0;
-       let primero = e[0];
-       for (i; i < n; i++) {
-           if (e[i] == " ") {
-           primero = primero + e[i + 1] + e[i + 2];
-           }
-       }
-       primero = primero.replace(/ /g, "");
-       primero = primero.replace(".", "");
-       primero = primero.replace("/", "");
-       primero = primero.replace("(", "");
-       return primero;
-       }
-</script>
+        }
+        function ganancia(e){
+            let porcent = document.getElementById("porcentaje").value;
+            return e*porcent/100;            
+        }
+        function precioventa(e){
+            let percent = document.getElementById("porcentaje").value;
+            let f = e*(1 + percent/100);
+            return f;
+        }
 
-    
-<%- include ('partials/_footer') -%>
+        function preciodolar(e) {
+            let dolar = document.getElementById("dolar").value;
+            let igv = document.getElementById('igv').checked;
+            e = e * dolar;
+            if (igv) {
+                return e
+            }
+            else {
+                e = e * 1.18;
+                return e
+            }
+
+        }
+
+        function primeros(e) {
+            let n = e.length;
+            let i = 0;
+            let primero = e[0];
+            for (i; i < n; i++) {
+                if (e[i] == " ") {
+                    primero = primero + e[i + 1] + e[i + 2];
+                }
+            }
+            primero = primero.replace(/ /g, "");
+            primero = primero.replace(".", "");
+            primero = primero.replace("/", "");
+            primero = primero.replace("(", "");
+            return primero;
+        }
+    </script>
+
+
+    <%- include ('partials/_footer') -%>

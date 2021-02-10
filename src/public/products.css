@@ -35,4 +35,13 @@ thead {
         display: block;
         text-align:center;
     }
+    .card{
+        width: 100% !important;
+    }
+}
+
+.card {
+    width: 50%;
+    margin: auto;
+    text-align: center;
 }
